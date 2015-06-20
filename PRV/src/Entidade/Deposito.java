@@ -78,4 +78,32 @@ public class Deposito {
 		this.veiculo = new Veiculo();
 		this.veiculo.setCapacidade(Integer.parseInt(capacidade));
 	}
+	
+	public void populaMatrizCusto() {
+		int tamanho = this.listaCliente.size();
+		this.matrizCustos = new float[tamanho][tamanho];
+		
+		for(int i = 1; i <= this.matrizCustos.length; i++){
+			for(int j = 1; j <= this.matrizCustos.length; j++){
+				this.matrizCustos[i-1][j-1] = (float) Math.sqrt(Math.pow(this.listaCliente.get(i).getCoordenadaX() - this.listaCliente.get(j).getCoordenadaX(),2) + 
+						Math.pow(this.listaCliente.get(i).getCoordenadaY() - this.listaCliente.get(j).getCoordenadaY(),2));
+			}
+		}
+		
+		for(int i = 0; i < this.matrizCustos.length-50; i++){
+			System.out.print(i + "  ");
+		}
+		System.out.println("");
+
+		
+		for(int i = 0; i < this.matrizCustos.length; i++){
+			System.out.print((i+1) + " - ");
+			for(int j = 0; j < this.matrizCustos.length; j++){
+				System.out.print(this.matrizCustos[i][j] + "  ");
+			}
+			System.out.println("");
+		}
+		
+		
+	}
 }

@@ -26,12 +26,15 @@ public class EntraDados {
 			Deposito deposito = new Deposito();
 			
 			while (linha != null) { 
-				System.out.printf("%s\n", linha);
+				//System.out.printf("%s\n", linha);
 				
 				String linhaArray[] = linha.split(this.caractere);
 				
 				if(linhaC == 0){
 					deposito.criaVeiculo(linhaArray[0]);
+				} else if (linhaC == 1){
+					deposito.setCoordenadaX(Float.parseFloat(linhaArray[1]));
+					deposito.setCoordenadaY(Float.parseFloat(linhaArray[2]));
 				} else {
 					deposito.criaCliente(linhaArray[0],linhaArray[1],linhaArray[2],linhaArray[3],linhaArray[4],linhaArray[5],linhaArray[6]);
 				}
@@ -40,7 +43,9 @@ public class EntraDados {
 				linha = lerArq.readLine(); 
 			} 
 			
-			arq.close(); 
+			arq.close();
+			
+			deposito.populaMatrizCusto();
 			
 		} catch (IOException e) { 
 			System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage()); 
