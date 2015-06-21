@@ -3,6 +3,8 @@ package Entidade;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import IO.ManipulaDados;
+
 public class Deposito {
 	
 	private float coordenadaX;
@@ -85,25 +87,17 @@ public class Deposito {
 		
 		for(int i = 1; i <= this.matrizCustos.length; i++){
 			for(int j = 1; j <= this.matrizCustos.length; j++){
-				this.matrizCustos[i-1][j-1] = (float) Math.sqrt(Math.pow(this.listaCliente.get(i).getCoordenadaX() - this.listaCliente.get(j).getCoordenadaX(),2) + 
-						Math.pow(this.listaCliente.get(i).getCoordenadaY() - this.listaCliente.get(j).getCoordenadaY(),2));
+				this.matrizCustos[i-1][j-1] = calculaDistancia(this.listaCliente.get(i).getCoordenadaX(), this.listaCliente.get(j).getCoordenadaX(), 
+															   this.listaCliente.get(i).getCoordenadaY(), this.listaCliente.get(j).getCoordenadaY());
 			}
 		}
 		
-		for(int i = 0; i < this.matrizCustos.length-50; i++){
-			System.out.print(i + "  ");
-		}
-		System.out.println("");
-
+		ManipulaDados manipula = new ManipulaDados();
+		manipula.escreveArquivo(this.matrizCustos);
 		
-		for(int i = 0; i < this.matrizCustos.length; i++){
-			System.out.print((i+1) + " - ");
-			for(int j = 0; j < this.matrizCustos.length; j++){
-				System.out.print(this.matrizCustos[i][j] + "  ");
-			}
-			System.out.println("");
-		}
-		
-		
+	}
+	
+	public float calculaDistancia(float x1, float x2, float y1, float y2) {
+		return (float) Math.sqrt(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
 	}
 }
