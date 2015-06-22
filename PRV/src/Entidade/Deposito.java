@@ -14,6 +14,7 @@ public class Deposito {
 	private ArrayList<Rota> listaRota = new ArrayList<>();
 	private HashMap<Integer, Cliente> listaCliente = new HashMap<>(); 
 	private float[][] matrizCustos;
+	private HashMap<Integer, Float> listaDemanda = new HashMap<>();
 
 	public Deposito() {
 		// TODO Auto-generated constructor stub
@@ -93,11 +94,36 @@ public class Deposito {
 		}
 		
 		ManipulaDados manipula = new ManipulaDados();
-		manipula.escreveArquivo(this.matrizCustos);
+		manipula.escreveArquivo(this.matrizCustos, "matrizCusto.txt");
 		
 	}
 	
 	public float calculaDistancia(float x1, float x2, float y1, float y2) {
 		return (float) Math.sqrt(Math.pow(x1 - x2,2) + Math.pow(y1 - y2,2));
+	}
+	
+	public void populaListaDemanda() {
+		for (int i=1; i <= this.listaCliente.size(); i++) {
+			this.listaDemanda.put(this.listaCliente.get(i).getIdentificador(), this.listaCliente.get(i).getDemanda());
+		}
+	}
+	
+	public void criaSolucaoInicial() {
+			
+		int[] auxCliente = new int[this.listaCliente.size()];
+		
+		for(int i = 0; i < this.matrizCustos.length; i++){
+			for(int j = 0; j < this.matrizCustos.length; j++){
+				
+			}
+		}
+		
+		for (int i=1; i <= this.listaCliente.size(); i++) {
+			this.listaDemanda.put(this.listaCliente.get(i).getIdentificador(), this.listaCliente.get(i).getDemanda());
+		}
+		
+		for (int i=1; i <= this.listaDemanda.size(); i++) {
+			System.out.println(i + " - " + this.listaDemanda.get(i));
+		}
 	}
 }

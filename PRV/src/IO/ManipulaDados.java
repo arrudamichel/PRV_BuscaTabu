@@ -41,10 +41,10 @@ public class ManipulaDados {
 		return null;		
 	}
 	
-	public boolean escreveArquivo(float[][] matrizCustos){
+	public boolean escreveArquivo(float[][] matrizCustos, String arquivoString){
 		
 		try {
-			File arquivo = new File("saida.txt");
+			File arquivo = new File(arquivoString);
 			
 			if (!arquivo.exists()) {			
 				arquivo.createNewFile();
