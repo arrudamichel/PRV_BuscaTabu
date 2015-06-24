@@ -1,7 +1,12 @@
 package Entidade;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import IO.ManipulaDados;
 
@@ -10,7 +15,7 @@ public class Deposito {
 	private float coordenadaX;
 	private float coordenadaY;
 	private Veiculo veiculo;
-	
+	ArrayList<Integer> listaColunas =  new ArrayList<Integer>();	
 	private ArrayList<Rota> listaRota = new ArrayList<>();
 	private HashMap<Integer, Cliente> listaCliente = new HashMap<>(); 
 	private float[][] matrizCustos;
@@ -109,21 +114,137 @@ public class Deposito {
 	}
 	
 	public void criaSolucaoInicial() {
-			
-		int[] auxCliente = new int[this.listaCliente.size()];
+		int tamanhoLista = 3;
+		int linhaAux = 0;
+		HashMap<Integer, Cliente> listaCandidatos = this.listaCliente;
 		
-		for(int i = 0; i < this.matrizCustos.length; i++){
-			for(int j = 0; j < this.matrizCustos.length; j++){
+		Rota rota = new Rota();
+		int linhaHist = 1;
+		while(listaCandidatos.size() != 1){
+			
+			linhaHist = linhaAux;
+			for(int colunaAux = 0; colunaAux < this.matrizCustos[linhaAux].length; colunaAux++) {
 				
+				//Verifica se não é o custo dele para ele
+				//Verifica se pode ser inserido na lista de colunas
+				//Verifica se não ultrapassa a capacidade do veículo)
+								
+				if(listaCandidatos.get(colunaAux) != null){
+					if((linhaAux != colunaAux) && 
+							(verificaCusto(listaColunas, colunaAux, linhaAux, tamanhoLista) && 
+							(verificaCapacidade(rota.getCustoTotal(), 
+									this.veiculo.getCapacidade(), 
+									listaCandidatos.get(colunaAux).getDemanda())))){
+						
+						colocaListaColunas(listaColunas, colunaAux, linhaAux, tamanhoLista);
+					}
+				}												
+			}
+			
+			//Insere cliente na rota			
+			if(listaColunas.size() != 0){
+				
+				int coluna = escolheItemRota(listaColunas);
+				
+				rota.setItemListaCliente(listaCandidatos.get(listaColunas.get(coluna)));
+				rota.setCustoTotal(rota.getCustoTotal() + listaColunas.get(coluna));
+				linhaAux = listaColunas.get(coluna);
+				
+				listaCandidatos.remove(listaColunas.get(coluna));
+				
+				listaColunas.clear();
+	
+			} else {
+								
+				System.out.print("Rota - ");
+				for (Cliente cliente : rota.getListaCliente()) {
+					System.out.print(cliente.getIdentificador() + ";");
+				}
+				System.out.println("");
+				linhaAux = 0;
+				rota = new Rota();
+			}
+			
+			
+				
+				/*try {
+					File arquivo = new File("rota.txt");
+					
+					if (!arquivo.exists()) {			
+						arquivo.createNewFile();
+					}
+					
+					FileWriter arq = new FileWriter(arquivo, true); 
+					PrintWriter gravarArq = new PrintWriter(arq); 
+
+					for(int i=0; i<rota.getListaCliente().size(); i++) {
+						gravarArq.printf(rota.getListaCliente().get(i).getIdentificador() + " ");
+								
+						
+					}
+					
+					arq.close();
+				} catch (IOException e) { 
+					e.printStackTrace();
+				}*/
+			
+			//Limpa listas			
+		}
+		
+		
+	}
+	
+	public int escolheItemRota(ArrayList<Integer> listaColunas) {
+		
+		if(listaColunas.size() == 1)
+			return 0;
+		
+		Random gerador = new Random();
+		
+        int numero = gerador.nextInt(listaColunas.size() - 1);
+        return numero;
+	}
+	
+	public boolean verificaVazio(HashMap<Integer, Cliente> listaCandidatos) {
+		if(listaCandidatos.size() == 1 && listaCandidatos.get(0) == null)
+			return true;
+		
+		return false;
+	}
+
+	public boolean verificaCusto(ArrayList<Integer> listaColunas, int coluna, int linha, int tamanhoLista) {
+		
+		if(listaColunas.size() < tamanhoLista){
+			return true;
+		}
+		
+		for (Integer cliente : listaColunas) {
+			if(matrizCustos[linha][coluna] < matrizCustos[linha][cliente]){
+				return true;
 			}
 		}
 		
-		for (int i=1; i <= this.listaCliente.size(); i++) {
-			this.listaDemanda.put(this.listaCliente.get(i).getIdentificador(), this.listaCliente.get(i).getDemanda());
-		}
+		return false;
+	}
+	
+	public void colocaListaColunas(ArrayList<Integer> listaColunas, int coluna, int linha, int tamanhoLista) {
 		
-		for (int i=1; i <= this.listaDemanda.size(); i++) {
-			System.out.println(i + " - " + this.listaDemanda.get(i));
+		if(listaColunas.size() < tamanhoLista){		
+			listaColunas.add(coluna);		
+		} else {
+			for(int i=0; i < listaColunas.size(); i++){			
+				if(this.matrizCustos[linha][coluna] < this.matrizCustos[linha][listaColunas.get(i)]){
+					listaColunas.remove(i);
+					listaColunas.add(coluna);
+				}
+			}
 		}
+	}
+	
+	public boolean verificaCapacidade(float custoAtual, int capacidade, float demanda) {
+		if((custoAtual + demanda) < capacidade)
+			return true;
+		else
+			return false;
 	}
 }

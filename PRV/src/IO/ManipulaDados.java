@@ -46,9 +46,14 @@ public class ManipulaDados {
 		try {
 			File arquivo = new File(arquivoString);
 			
+			if(arquivo.exists()){
+				arquivo.delete();
+			}
+			
 			if (!arquivo.exists()) {			
 				arquivo.createNewFile();
-			}
+			} 
+			
 			
 			FileWriter arq = new FileWriter(arquivo, true); 
 			PrintWriter gravarArq = new PrintWriter(arq); 

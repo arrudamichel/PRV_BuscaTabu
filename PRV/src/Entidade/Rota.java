@@ -18,6 +18,10 @@ public class Rota {
 	public void setListaCliente(ArrayList<Cliente> listaCliente) {
 		this.listaCliente = listaCliente;
 	}
+	
+	public void setItemListaCliente(Cliente cliente) {
+		this.listaCliente.add(cliente);
+	}
 
 	public int getCustoTotal() {
 		return custoTotal;
