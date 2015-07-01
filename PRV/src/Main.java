@@ -33,7 +33,7 @@ public class Main {
 			deposito.populaMatrizCusto();
 			deposito.populaListaDemanda();
 			
-			deposito.criaSolucaoInicial();
+			deposito.buscaTabu();
 	}
 
 }

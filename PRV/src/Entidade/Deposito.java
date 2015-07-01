@@ -113,28 +113,53 @@ public class Deposito {
 		}
 	}
 	
-	public void criaSolucaoInicial() {
-		int tamanhoLista = 3;
+	public ArrayList<Rota> buscaTabu() {
+		ArrayList<Rota> solucao = criaSolucaoInicial();
+		int iter = 0;
+		int melhorIter = 0;
+		int btMax = 100;
+		
+		while((iter - melhorIter) <= btMax){
+			iter++;
+			
+			
+		}
+		
+		return solucao;
+	}
+	
+	public ArrayList<Rota> criaSolucaoInicial() {
+		
+		Cliente deposito = new Cliente();
+		deposito.setCoordenadaX(this.coordenadaX);
+		deposito.setCoordenadaY(this.coordenadaY);
+		deposito.setDemanda(0);
+		deposito.setIdentificador(0);
+		
 		int linhaAux = 0;
 		HashMap<Integer, Cliente> listaCandidatos = this.listaCliente;
-		
+		int tamanhoLista = 3;
+		ArrayList<Rota> rotas = new ArrayList<>();
 		Rota rota = new Rota();
 		int linhaHist = 1;
-		while(listaCandidatos.size() != 1){
+		while(listaCandidatos.size() != 1){	
+
+			//Se deposito
+			if(linhaAux == 0){
+				rota = new Rota();
+				rota.setItemListaCliente(deposito);
+				rota.setCustoTotal((int) (rota.getCustoTotal() + this.matrizCustos[linhaAux][0]));
+			}
 			
 			linhaHist = linhaAux;
 			for(int colunaAux = 0; colunaAux < this.matrizCustos[linhaAux].length; colunaAux++) {
 				
-				//Verifica se não é o custo dele para ele
-				//Verifica se pode ser inserido na lista de colunas
-				//Verifica se não ultrapassa a capacidade do veículo)
-								
 				if(listaCandidatos.get(colunaAux) != null){
-					if((linhaAux != colunaAux) && 
-							(verificaCusto(listaColunas, colunaAux, linhaAux, tamanhoLista) && 
-							(verificaCapacidade(rota.getCustoTotal(), 
-									this.veiculo.getCapacidade(), 
-									listaCandidatos.get(colunaAux).getDemanda())))){
+					if((linhaAux != colunaAux) && //Verifica se i != i
+						(verificaCusto(listaColunas, colunaAux, linhaAux, tamanhoLista) && //Pode ser na lista de colunas 
+						(verificaCapacidade(rota.getCustoTotal(), 
+								this.veiculo.getCapacidade(), 
+								listaCandidatos.get(colunaAux).getDemanda())))){ //Verifica se ultrapassa a capacidade do veiculo
 						
 						colocaListaColunas(listaColunas, colunaAux, linhaAux, tamanhoLista);
 					}
@@ -147,51 +172,36 @@ public class Deposito {
 				int coluna = escolheItemRota(listaColunas);
 				
 				rota.setItemListaCliente(listaCandidatos.get(listaColunas.get(coluna)));
-				rota.setCustoTotal(rota.getCustoTotal() + listaColunas.get(coluna));
+				System.out.println(listaColunas.get(coluna) + " - " + matrizCustos[linhaAux][listaColunas.get(coluna)]);
+				rota.setCustoTotal((int) (rota.getCustoTotal() + matrizCustos[linhaAux][listaColunas.get(coluna)]));
 				linhaAux = listaColunas.get(coluna);
 				
 				listaCandidatos.remove(listaColunas.get(coluna));
 				
 				listaColunas.clear();
 	
-			} else {
-								
-				System.out.print("Rota - ");
-				for (Cliente cliente : rota.getListaCliente()) {
-					System.out.print(cliente.getIdentificador() + ";");
-				}
-				System.out.println("");
+			} else {												
 				linhaAux = 0;
-				rota = new Rota();
-			}
-			
-			
-				
-				/*try {
-					File arquivo = new File("rota.txt");
-					
-					if (!arquivo.exists()) {			
-						arquivo.createNewFile();
-					}
-					
-					FileWriter arq = new FileWriter(arquivo, true); 
-					PrintWriter gravarArq = new PrintWriter(arq); 
-
-					for(int i=0; i<rota.getListaCliente().size(); i++) {
-						gravarArq.printf(rota.getListaCliente().get(i).getIdentificador() + " ");
 								
-						
-					}
-					
-					arq.close();
-				} catch (IOException e) { 
-					e.printStackTrace();
-				}*/
-			
-			//Limpa listas			
+				rota.setItemListaCliente(deposito);
+				int posicao = rota.getListaCliente().get(rota.getListaCliente().size() - 1).getIdentificador();				
+				rota.setCustoTotal((int) (rota.getCustoTotal() + this.matrizCustos[linhaAux][posicao]));				
+				rotas.add(rota);
+				listaColunas.clear();
+			}
+		}
+		
+		for (Rota rota2 : rotas) {
+			System.out.print(rota2.getCustoTotal() + " - Rota - ");
+			for (Cliente cliente : rota2.getListaCliente()) {
+				System.out.print(cliente.getIdentificador() + ";");
+			}
+			System.out.println("");
 		}
 		
 		
+		
+		return rotas;
 	}
 	
 	public int escolheItemRota(ArrayList<Integer> listaColunas) {
