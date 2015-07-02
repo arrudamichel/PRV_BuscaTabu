@@ -29,7 +29,7 @@ public class Main {
 				
 				linhaC++;
 			}
-			
+	
 			deposito.populaMatrizCusto();
 			deposito.populaListaDemanda();
 			

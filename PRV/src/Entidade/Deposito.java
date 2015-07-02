@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -115,20 +116,165 @@ public class Deposito {
 	
 	public ArrayList<Rota> buscaTabu() {
 		ArrayList<Rota> solucao = criaSolucaoInicial();
+		
+		for (Rota rota2 : solucao) {
+			System.out.print(rota2.getCustoTotal() + " - Rota - ");
+			for (Cliente cliente : rota2.getListaCliente()) {
+				System.out.print(cliente.getIdentificador() + ";");
+			}
+			System.out.println("");
+		}
+		
 		int iter = 0;
 		int melhorIter = 0;
 		int btMax = 100;
 		
-		while((iter - melhorIter) <= btMax){
+		/*while((iter - melhorIter) <= btMax){
 			iter++;
 			
+			ArrayList<Rota> solucaoTemp = criaSolucaoRealocacao(solucao);
+			
+			if(funcaoObjetivo(solucaoTemp) < funcaoObjetivo(solucao)){
+				solucao = solucaoTemp;
+				melhorIter = iter;
+			}			
+		}*/
+		
+		System.out.println("---------NOVA SOLUCAO--------");
+
+		ArrayList<Rota> solucaoTemp = criaSolucaoRealocacao(solucao);
+		
+		for (Rota rota2 : solucaoTemp) {
+			System.out.print(rota2.getCustoTotal() + " - Rota - ");
+			for (Cliente cliente : rota2.getListaCliente()) {
+				System.out.print(cliente.getIdentificador() + ";");
+			}
+			System.out.println("");
+		}
+		
+		return solucaoTemp;
+	}
+	
+	public ArrayList<Rota> criaSolucaoTroca(ArrayList<Rota> solucao){
+		ArrayList<Rota> solucaoCriada = solucao;
+		
+		
+		return solucaoCriada;
+	}
+	
+	public ArrayList<Rota> criaSolucaoRealocacao(ArrayList<Rota> solucao){
+		ArrayList<Rota> solucaoCriada = solucao;
+		
+		//Escolha da rota com maior custo
+		Rota rotaBase = new Rota();
+		int custoTemp = 0;
+		int indexRotaBase = -1;
+		
+		for(int i = 0; i < solucao.size(); i++){
+			if(custoTemp < solucao.get(i).getCustoTotal()){
+				custoTemp = solucao.get(i).getCustoTotal();
+				rotaBase = solucao.get(i);
+				indexRotaBase = i;
+			}
+		}				
+		
+		Rota rotaSolucao = null;
+		//Realização da realocação 
+ 		for(int z = 0; z < rotaBase.getListaCliente().size(); z++){
+ 			Cliente clienteBase = rotaBase.getListaCliente().get(z);
+		/*for (Cliente clienteBase : rotaBase.getListaCliente()) {*/
+			
+			custoTemp = 99999999;
+			Rota rotaBaseTemp = rotaBase;
+			rotaBaseTemp.getListaCliente().remove(clienteBase);			
+			
+			//Tenta em cada rota
+			for(int i = 0; i < solucao.size(); i++){
+				if(i != indexRotaBase){
+					if(clienteBase.getDemanda() + custoDemanda(solucao.get(i)) > this.veiculo.getCapacidade()){
+						break;
+					}						
+					else{					
+						ArrayList<Cliente> listaClienteTemp = solucao.get(i).getListaCliente();
+						for(int j = 0; j < solucao.get(i).getListaCliente().size(); j++){
+							
+							if(solucao.get(i).getListaCliente().get(j).getIdentificador() != 0){																
+								
+								listaClienteTemp.add(j,clienteBase);
+								
+								Rota rotaTemp = new Rota();
+								rotaTemp.setListaCliente(listaClienteTemp);
+								int custoRota = custoDistancia(rotaTemp);
+								rotaTemp.setCustoTotal(custoRota);							
+								
+								if(custoTemp > custoRota){
+									custoTemp = custoRota;
+									rotaSolucao = rotaTemp;
+									
+									System.out.println("Elemento - " + clienteBase);
+								}
+								
+								listaClienteTemp.remove(j);
+							}												
+						}
+					}
+					
+					if(rotaSolucao != null){
+						solucaoCriada.remove(i);
+						solucaoCriada.add(rotaSolucao);
+						
+						rotaBaseTemp.setCustoTotal(custoDistancia(rotaBaseTemp));
+						
+						solucaoCriada.remove(indexRotaBase);
+						solucaoCriada.add(rotaBaseTemp);
+					}
+				}
+			}
 			
 		}
 		
-		return solucao;
+		
+		
+		return solucaoCriada;
 	}
 	
-	public ArrayList<Rota> criaSolucaoInicial() {
+	public int custoDistancia(Rota rota){
+		int valor = 0;
+		
+		ArrayList<Cliente> clientes = rota.getListaCliente();
+		int indiceAnt = clientes.get(0).getIdentificador();
+		
+		for (int i = 1; i < clientes.size(); i++) {
+			int indiceAtual = clientes.get(i).getIdentificador();
+			
+			valor += this.matrizCustos[indiceAnt][indiceAtual];
+			indiceAnt = indiceAtual;			
+		}
+	
+		return valor;
+	}
+	
+	public int custoDemanda(Rota rota){
+		int valor = 0;
+		
+		for (Cliente cliente : rota.getListaCliente()) {
+			valor += cliente.getDemanda();
+		}
+	
+		return valor;
+	}
+	
+	public int funcaoObjetivo(ArrayList<Rota> solucao){
+		int valor = 0;
+		
+		for (Rota rota : solucao) {
+			valor += rota.getCustoTotal();
+		}
+	
+		return valor;
+	}
+	
+	private ArrayList<Rota> criaSolucaoInicial() {
 		
 		Cliente deposito = new Cliente();
 		deposito.setCoordenadaX(this.coordenadaX);
@@ -172,7 +318,6 @@ public class Deposito {
 				int coluna = escolheItemRota(listaColunas);
 				
 				rota.setItemListaCliente(listaCandidatos.get(listaColunas.get(coluna)));
-				System.out.println(listaColunas.get(coluna) + " - " + matrizCustos[linhaAux][listaColunas.get(coluna)]);
 				rota.setCustoTotal((int) (rota.getCustoTotal() + matrizCustos[linhaAux][listaColunas.get(coluna)]));
 				linhaAux = listaColunas.get(coluna);
 				
@@ -189,18 +334,8 @@ public class Deposito {
 				rotas.add(rota);
 				listaColunas.clear();
 			}
-		}
-		
-		for (Rota rota2 : rotas) {
-			System.out.print(rota2.getCustoTotal() + " - Rota - ");
-			for (Cliente cliente : rota2.getListaCliente()) {
-				System.out.print(cliente.getIdentificador() + ";");
-			}
-			System.out.println("");
-		}
-		
-		
-		
+		}				
+
 		return rotas;
 	}
 	
