@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 
+import Entidade.Cliente;
 import Entidade.Deposito;
+import Entidade.Rota;
 import IO.ManipulaDados;
 
 
@@ -33,7 +35,17 @@ public class Main {
 			deposito.populaMatrizCusto();
 			deposito.populaListaDemanda();
 			
-			deposito.buscaTabu();
+			ArrayList<Rota> solucao = deposito.buscaTabu();
+			
+			System.out.println("---------NOVA SOLUCAO--------");			
+			
+			for (Rota rota2 : solucao) {
+				System.out.print(rota2.getCustoTotal() + " - Rota - ");
+				for (Cliente cliente : rota2.getListaCliente()) {
+					System.out.print(cliente.getIdentificador() + ";");
+				}
+				System.out.println("");
+			}
 	}
 
 }

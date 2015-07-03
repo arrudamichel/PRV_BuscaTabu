@@ -142,7 +142,7 @@ public class Deposito {
 		
 		System.out.println("---------NOVA SOLUCAO--------");
 
-		ArrayList<Rota> solucaoTemp = criaSolucaoRealocacao(solucao);
+		ArrayList<Rota> solucaoTemp = criaSolucaoTroca(solucao);
 		
 		for (Rota rota2 : solucaoTemp) {
 			System.out.print(rota2.getCustoTotal() + " - Rota - ");
@@ -152,13 +152,75 @@ public class Deposito {
 			System.out.println("");
 		}
 		
-		return solucaoTemp;
+		return solucao;
 	}
 	
 	public ArrayList<Rota> criaSolucaoTroca(ArrayList<Rota> solucao){
 		ArrayList<Rota> solucaoCriada = solucao;
 		
+		Rota rotaBase = new Rota();
+		int custoTemp = 0;
+		int indexRotaBase = -1;
 		
+		//Seleciona Rota Base
+		for(int c = 0; c < solucao.size(); c++){			
+						
+			custoTemp = solucao.get(c).getCustoTotal();
+			rotaBase = solucao.get(c);
+			indexRotaBase = c;
+			
+			Rota rotaSolucao = null;
+			
+			//Seleciona elemento da rota base
+	 		for(int z = 0; z < rotaBase.getListaCliente().size(); z++){	 			
+				System.out.println("Zfor = "+z);
+	 				 			
+	 			Cliente clienteBase = rotaBase.getListaCliente().get(z);				
+				custoTemp = 99999999;
+				Rota rotaBaseTemp = rotaBase;
+				
+				//Seleciona Rota
+				for(int i = 0; i < solucao.size(); i++){
+					if(i != indexRotaBase){
+						//Seleciona elemento rota
+						ArrayList<Cliente> listaClienteTemp = solucao.get(i).getListaCliente();
+						for(int j = 0; j < solucao.get(i).getListaCliente().size(); j++){
+							
+							if(solucao.get(i).getListaCliente().get(j).getIdentificador() != 0){																
+								
+								int custoRotaAntBase = custoDistancia(solucao.get(indexRotaBase));
+								int custoRotaAnt = custoDistancia(solucao.get(i));
+								
+								listaClienteTemp.add(j,clienteBase);
+								//System.out.println("J = "+j);
+								listaClienteTemp.remove(j+1);
+								
+								rotaBase.getListaCliente().add(z,solucao.get(i).getListaCliente().get(j));
+								rotaBase.getListaCliente().remove(z+1);
+								System.out.println("Z = "+z);
+								
+								Rota rotaTempBase = new Rota();
+								rotaTempBase.setListaCliente(listaClienteTemp);
+								int custoRotaTempBase = custoDistancia(rotaTempBase);
+								rotaTempBase.setCustoTotal(custoRotaTempBase);							
+								
+								Rota rotaTemp = new Rota();
+								rotaTemp.setListaCliente(listaClienteTemp);
+								int custoRotaTemp = custoDistancia(rotaTemp);
+								rotaTemp.setCustoTotal(custoRotaTemp);
+								
+								if(custoRotaTempBase < custoRotaAntBase || custoRotaAnt < custoRotaTemp){
+									//custoTemp = custoRota;
+									rotaSolucao = rotaTemp;
+								}
+								
+								//listaClienteTemp.remove(j);
+							}												
+						}												
+					}
+				}
+	 		}
+		}
 		return solucaoCriada;
 	}
 	
