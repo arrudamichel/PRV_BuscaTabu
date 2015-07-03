@@ -170,71 +170,67 @@ public class Deposito {
 		int custoTemp = 0;
 		int indexRotaBase = -1;
 		
-		for(int i = 0; i < solucao.size(); i++){
-			if(custoTemp < solucao.get(i).getCustoTotal()){
-				custoTemp = solucao.get(i).getCustoTotal();
-				rotaBase = solucao.get(i);
-				indexRotaBase = i;
-			}
-		}				
+		for(int c = 0; c < solucao.size(); c++){			
+			custoTemp = solucao.get(c).getCustoTotal();
+			rotaBase = solucao.get(c);
+			indexRotaBase = c;						
 		
-		Rota rotaSolucao = null;
-		//Realização da realocação 
- 		for(int z = 0; z < rotaBase.getListaCliente().size(); z++){
- 			Cliente clienteBase = rotaBase.getListaCliente().get(z);
-		/*for (Cliente clienteBase : rotaBase.getListaCliente()) {*/
-			
-			custoTemp = 99999999;
-			Rota rotaBaseTemp = rotaBase;
-			rotaBaseTemp.getListaCliente().remove(clienteBase);			
-			
-			//Tenta em cada rota
-			for(int i = 0; i < solucao.size(); i++){
-				if(i != indexRotaBase){
-					if(clienteBase.getDemanda() + custoDemanda(solucao.get(i)) > this.veiculo.getCapacidade()){
-						break;
-					}						
-					else{					
-						ArrayList<Cliente> listaClienteTemp = solucao.get(i).getListaCliente();
-						for(int j = 0; j < solucao.get(i).getListaCliente().size(); j++){
-							
-							if(solucao.get(i).getListaCliente().get(j).getIdentificador() != 0){																
+			Rota rotaSolucao = null;
+			//Realizaï¿½ï¿½o da realocaï¿½ï¿½o 
+	 		for(int z = 0; z < rotaBase.getListaCliente().size(); z++){
+	 			Cliente clienteBase = rotaBase.getListaCliente().get(z);
+			/*for (Cliente clienteBase : rotaBase.getListaCliente()) {*/
+				
+				custoTemp = 99999999;
+				Rota rotaBaseTemp = rotaBase;
+				
+				//Tenta em cada rota
+				for(int i = 0; i < solucao.size(); i++){
+					if(i != indexRotaBase){
+						if(clienteBase.getDemanda() + custoDemanda(solucao.get(i)) > this.veiculo.getCapacidade()){
+							break;
+						}						
+						else{					
+							ArrayList<Cliente> listaClienteTemp = solucao.get(i).getListaCliente();
+							for(int j = 0; j < solucao.get(i).getListaCliente().size(); j++){
 								
-								listaClienteTemp.add(j,clienteBase);
-								
-								Rota rotaTemp = new Rota();
-								rotaTemp.setListaCliente(listaClienteTemp);
-								int custoRota = custoDistancia(rotaTemp);
-								rotaTemp.setCustoTotal(custoRota);							
-								
-								if(custoTemp > custoRota){
-									custoTemp = custoRota;
-									rotaSolucao = rotaTemp;
+								if(solucao.get(i).getListaCliente().get(j).getIdentificador() != 0){																
 									
-									System.out.println("Elemento - " + clienteBase);
-								}
-								
-								listaClienteTemp.remove(j);
-							}												
+									listaClienteTemp.add(j,clienteBase);
+									
+									Rota rotaTemp = new Rota();
+									rotaTemp.setListaCliente(listaClienteTemp);
+									int custoRota = custoDistancia(rotaTemp);
+									rotaTemp.setCustoTotal(custoRota);							
+									
+									if(custoTemp > custoRota){
+										custoTemp = custoRota;
+										rotaSolucao = rotaTemp;
+										
+										System.out.println("Elemento - " + clienteBase);
+									}
+									
+									listaClienteTemp.remove(j);
+								}												
+							}
+						}
+						
+						if(rotaSolucao != null){
+							solucaoCriada.remove(i);
+							solucaoCriada.add(rotaSolucao);
+							
+							rotaBaseTemp.setCustoTotal(custoDistancia(rotaBaseTemp));						
+							rotaBaseTemp.getListaCliente().remove(clienteBase);						
+							
+							solucaoCriada.remove(indexRotaBase);
+							solucaoCriada.add(rotaBaseTemp);
 						}
 					}
-					
-					if(rotaSolucao != null){
-						solucaoCriada.remove(i);
-						solucaoCriada.add(rotaSolucao);
-						
-						rotaBaseTemp.setCustoTotal(custoDistancia(rotaBaseTemp));
-						
-						solucaoCriada.remove(indexRotaBase);
-						solucaoCriada.add(rotaBaseTemp);
-					}
 				}
+				
 			}
-			
 		}
-		
-		
-		
+	
 		return solucaoCriada;
 	}
 	
