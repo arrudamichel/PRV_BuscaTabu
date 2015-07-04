@@ -128,11 +128,11 @@ public class Deposito {
 		int iter = 0;
 		int melhorIter = 0;
 		int btMax = 100;
-		
-		/*while((iter - melhorIter) <= btMax){
+		/*ArrayList<Rota> solucaoTemp = null;
+		while((iter - melhorIter) <= btMax){
 			iter++;
 			
-			ArrayList<Rota> solucaoTemp = criaSolucaoRealocacao(solucao);
+			solucaoTemp = criaSolucaoRealocacao(solucao);
 			
 			if(funcaoObjetivo(solucaoTemp) < funcaoObjetivo(solucao)){
 				solucao = solucaoTemp;
@@ -142,7 +142,7 @@ public class Deposito {
 		
 		System.out.println("---------NOVA SOLUCAO--------");
 
-		ArrayList<Rota> solucaoTemp = criaSolucaoTroca(solucao);
+		ArrayList<Rota> solucaoTemp = criaSolucaoRealocacao(solucao);
 		
 		for (Rota rota2 : solucaoTemp) {
 			System.out.print(rota2.getCustoTotal() + " - Rota - ");
@@ -173,7 +173,6 @@ public class Deposito {
 			
 			//Seleciona elemento da rota base
 	 		for(int z = 0; z < rotaBase.getListaCliente().size(); z++){	 			
-				System.out.println("Zfor = "+z);
 	 				 			
 	 			Cliente clienteBase = rotaBase.getListaCliente().get(z);				
 				custoTemp = 99999999;
@@ -188,16 +187,27 @@ public class Deposito {
 							
 							if(solucao.get(i).getListaCliente().get(j).getIdentificador() != 0){																
 								
+								//Verifica se ultrapassa capacidade do veiculo
+								if(custoDemanda(rotaBaseTemp) - clienteBase.getDemanda() + listaClienteTemp.get(j).getDemanda() > this.veiculo.getCapacidade()
+								   && custoDemanda(solucao.get(i)) + clienteBase.getDemanda() - listaClienteTemp.get(j).getDemanda() > this.veiculo.getCapacidade()){
+									System.out.println(custoDemanda(rotaBaseTemp) + " - " 
+												+ clienteBase.getDemanda() +  " + " + listaClienteTemp.get(j).getDemanda() + " > " + this.veiculo.getCapacidade());
+									
+									System.out.println(custoDemanda(solucao.get(i)) + " + " 
+											+ clienteBase.getDemanda() +  " - " + listaClienteTemp.get(j).getDemanda() + " > " + this.veiculo.getCapacidade());
+									
+									
+									break;
+								}
+								
 								int custoRotaAntBase = custoDistancia(solucao.get(indexRotaBase));
 								int custoRotaAnt = custoDistancia(solucao.get(i));
 								
 								listaClienteTemp.add(j,clienteBase);
-								//System.out.println("J = "+j);
 								listaClienteTemp.remove(j+1);
 								
 								rotaBase.getListaCliente().add(z,solucao.get(i).getListaCliente().get(j));
 								rotaBase.getListaCliente().remove(z+1);
-								System.out.println("Z = "+z);
 								
 								Rota rotaTempBase = new Rota();
 								rotaTempBase.setListaCliente(listaClienteTemp);
@@ -227,34 +237,36 @@ public class Deposito {
 	public ArrayList<Rota> criaSolucaoRealocacao(ArrayList<Rota> solucao){
 		ArrayList<Rota> solucaoCriada = solucao;
 		
-		//Escolha da rota com maior custo
 		Rota rotaBase = new Rota();
 		int custoTemp = 0;
 		int indexRotaBase = -1;
 		
-		for(int c = 0; c < solucao.size(); c++){			
-			custoTemp = solucao.get(c).getCustoTotal();
+		//Escolhe rota base
+		for(int c = 0; c < solucao.size(); c++){				
 			rotaBase = solucao.get(c);
-			indexRotaBase = c;						
-		
+			indexRotaBase = c;			
 			Rota rotaSolucao = null;
-			//Realiza��o da realoca��o 
+			
+			//Escolhe Cliente rota base 
 	 		for(int z = 0; z < rotaBase.getListaCliente().size(); z++){
+	 			custoTemp = 99999999;
 	 			Cliente clienteBase = rotaBase.getListaCliente().get(z);
-			/*for (Cliente clienteBase : rotaBase.getListaCliente()) {*/
-				
-				custoTemp = 99999999;
 				Rota rotaBaseTemp = rotaBase;
 				
-				//Tenta em cada rota
+				//Escolhe rota
 				for(int i = 0; i < solucao.size(); i++){
+					
 					if(i != indexRotaBase){
+						
 						if(clienteBase.getDemanda() + custoDemanda(solucao.get(i)) > this.veiculo.getCapacidade()){
 							break;
-						}						
-						else{					
+						}
+						
+						else{
+							
+							//Escolhe elemento rota
 							ArrayList<Cliente> listaClienteTemp = solucao.get(i).getListaCliente();
-							for(int j = 0; j < solucao.get(i).getListaCliente().size(); j++){
+							for(int j = 1; j < solucao.get(i).getListaCliente().size() - 1; j++){
 								
 								if(solucao.get(i).getListaCliente().get(j).getIdentificador() != 0){																
 									
@@ -265,11 +277,9 @@ public class Deposito {
 									int custoRota = custoDistancia(rotaTemp);
 									rotaTemp.setCustoTotal(custoRota);							
 									
-									if(custoTemp > custoRota){
+									if(custoRota < solucao.get(i).getCustoTotal() && custoRota < custoTemp){
 										custoTemp = custoRota;
 										rotaSolucao = rotaTemp;
-										
-										System.out.println("Elemento - " + clienteBase);
 									}
 									
 									listaClienteTemp.remove(j);
@@ -300,8 +310,9 @@ public class Deposito {
 		int valor = 0;
 		
 		ArrayList<Cliente> clientes = rota.getListaCliente();
+		//System.out.print("AntesIndice = " );
 		int indiceAnt = clientes.get(0).getIdentificador();
-		
+		//System.out.println(indiceAnt);
 		for (int i = 1; i < clientes.size(); i++) {
 			int indiceAtual = clientes.get(i).getIdentificador();
 			
@@ -318,7 +329,6 @@ public class Deposito {
 		for (Cliente cliente : rota.getListaCliente()) {
 			valor += cliente.getDemanda();
 		}
-	
 		return valor;
 	}
 	
@@ -361,7 +371,7 @@ public class Deposito {
 				if(listaCandidatos.get(colunaAux) != null){
 					if((linhaAux != colunaAux) && //Verifica se i != i
 						(verificaCusto(listaColunas, colunaAux, linhaAux, tamanhoLista) && //Pode ser na lista de colunas 
-						(verificaCapacidade(rota.getCustoTotal(), 
+						(verificaCapacidade(custoDemanda(rota), 
 								this.veiculo.getCapacidade(), 
 								listaCandidatos.get(colunaAux).getDemanda())))){ //Verifica se ultrapassa a capacidade do veiculo
 						

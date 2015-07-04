@@ -37,7 +37,7 @@ public class Main {
 			
 			ArrayList<Rota> solucao = deposito.buscaTabu();
 			
-			System.out.println("---------NOVA SOLUCAO--------");			
+			/*System.out.println("---------NOVA SOLUCAO--------");			
 			
 			for (Rota rota2 : solucao) {
 				System.out.print(rota2.getCustoTotal() + " - Rota - ");
@@ -45,7 +45,7 @@ public class Main {
 					System.out.print(cliente.getIdentificador() + ";");
 				}
 				System.out.println("");
-			}
+			}*/
 	}
 
 }
