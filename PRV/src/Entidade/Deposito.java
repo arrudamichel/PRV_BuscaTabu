@@ -118,7 +118,8 @@ public class Deposito {
 		ArrayList<Rota> solucao = criaSolucaoInicial();
 		
 		for (Rota rota2 : solucao) {
-			System.out.print(rota2.getCustoTotal() + " - Rota - ");
+			System.out.print("Rota - " + "Distancia: " + rota2.getCustoTotal());
+			System.out.println(" - Demanda: " + custoDemanda(rota2));
 			for (Cliente cliente : rota2.getListaCliente()) {
 				System.out.print(cliente.getIdentificador() + ";");
 			}
@@ -145,7 +146,8 @@ public class Deposito {
 		ArrayList<Rota> solucaoTemp = criaSolucaoRealocacao(solucao);
 		
 		for (Rota rota2 : solucaoTemp) {
-			System.out.print(rota2.getCustoTotal() + " - Rota - ");
+			System.out.print("Rota - " + "Distancia: " + rota2.getCustoTotal());
+			System.out.println(" - Demanda: " + custoDemanda(rota2));
 			for (Cliente cliente : rota2.getListaCliente()) {
 				System.out.print(cliente.getIdentificador() + ";");
 			}
@@ -397,7 +399,8 @@ public class Deposito {
 				linhaAux = 0;
 								
 				rota.setItemListaCliente(deposito);
-				int posicao = rota.getListaCliente().get(rota.getListaCliente().size() - 1).getIdentificador();				
+				int posicao = rota.getListaCliente().get(rota.getListaCliente().size() - 1).getIdentificador();
+
 				rota.setCustoTotal((int) (rota.getCustoTotal() + this.matrizCustos[linhaAux][posicao]));				
 				rotas.add(rota);
 				listaColunas.clear();
@@ -455,8 +458,9 @@ public class Deposito {
 	}
 	
 	public boolean verificaCapacidade(float custoAtual, int capacidade, float demanda) {
-		if((custoAtual + demanda) < capacidade)
+		if((custoAtual + demanda) <= capacidade){
 			return true;
+		}			
 		else
 			return false;
 	}
