@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class ManipulaDados {
 
-	private String nomeArquivo = "dado.txt";
+	private String nomeArquivo = "dado2.txt";
 
 	public ManipulaDados() {
 		// TODO Auto-generated constructor stub

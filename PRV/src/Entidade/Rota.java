@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Rota {
 	
 	private ArrayList<Cliente> listaCliente = new ArrayList<>();
-	private int custoTotal;
+	private Double custoTotal = 0.0;
 	
 	public Rota() {
 		// TODO Auto-generated constructor stub
@@ -16,18 +16,21 @@ public class Rota {
 	}
 
 	public void setListaCliente(ArrayList<Cliente> listaCliente) {
-		this.listaCliente = listaCliente;
+		
+		for (Cliente cliente : listaCliente) {
+			this.listaCliente.add(cliente);
+		}				
 	}
 	
 	public void setItemListaCliente(Cliente cliente) {
 		this.listaCliente.add(cliente);
 	}
 
-	public int getCustoTotal() {
+	public Double getCustoTotal() {
 		return custoTotal;
 	}
 
-	public void setCustoTotal(int custoTotal) {
+	public void setCustoTotal(Double custoTotal) {
 		this.custoTotal = custoTotal;
 	}
 

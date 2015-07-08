@@ -24,18 +24,22 @@ public class Main {
 					deposito.setCoordenadaX(Float.parseFloat(linhaArray[1]));
 					deposito.setCoordenadaY(Float.parseFloat(linhaArray[2]));
 					
-					deposito.criaCliente(linhaArray[0],linhaArray[1],linhaArray[2],linhaArray[3],linhaArray[4],linhaArray[5],linhaArray[6]);
+					//deposito.criaCliente(linhaArray[0],linhaArray[1],linhaArray[2],linhaArray[3]);
 				} else {
-					deposito.criaCliente(linhaArray[0],linhaArray[1],linhaArray[2],linhaArray[3],linhaArray[4],linhaArray[5],linhaArray[6]);
+					deposito.criaCliente(linhaArray[0],linhaArray[1],linhaArray[2],linhaArray[3]);
 				}
 				
 				linhaC++;
 			}
 	
+			/*for (Integer key : deposito.getListaCliente().keySet()) {				
+				System.out.print(deposito.getListaCliente().get(key).getIdentificador() + ";" );
+			}*/
 			deposito.populaMatrizCusto();
 			deposito.populaListaDemanda();
 			
 			ArrayList<Rota> solucao = deposito.buscaTabu();
+			
 			
 			/*System.out.println("---------NOVA SOLUCAO--------");			
 			

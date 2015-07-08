@@ -6,23 +6,18 @@ public class Cliente {
 	private float coordenadaX;
 	private float coordenadaY;
 	private float demanda;
-	private float tempoInicio;
-	private float tempoFim;
 	
 	public Cliente() {
 		// TODO Auto-generated constructor stub
 	}
 
 	
-	public Cliente(int identificador, float coordenadaX, float coordenadaY,
-			float demanda, float tempoInicio, float tempoFim) {
+	public Cliente(int identificador, float coordenadaX, float coordenadaY,	float demanda) {
 		super();
 		this.identificador = identificador;
 		this.coordenadaX = coordenadaX;
 		this.coordenadaY = coordenadaY;
 		this.demanda = demanda;
-		this.tempoInicio = tempoInicio;
-		this.tempoFim = tempoFim;
 	}
 
 
@@ -57,21 +52,4 @@ public class Cliente {
 	public void setDemanda(float demanda) {
 		this.demanda = demanda;
 	}
-
-	public float getTempoInicio() {
-		return tempoInicio;
-	}
-
-	public void setTempoInicio(float tempoInicio) {
-		this.tempoInicio = tempoInicio;
-	}
-
-	public float getTempoFim() {
-		return tempoFim;
-	}
-
-	public void setTempoFim(float tempoFim) {
-		this.tempoFim = tempoFim;
-	}
-
 }
