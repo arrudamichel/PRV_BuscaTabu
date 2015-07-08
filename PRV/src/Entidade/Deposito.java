@@ -16,7 +16,7 @@ public class Deposito {
 	private float[][] matrizCustos;
 	private HashMap<Integer, Float> listaDemanda = new HashMap<>();
 	private ArrayList<ElementoListaTabu> listaTabu = new ArrayList<ElementoListaTabu>();
-	private int tamanhoListaTabu = 10;
+	private int tamanhoListaTabu = 500;
 	
 	public Deposito() {
 		// TODO Auto-generated constructor stub
@@ -139,7 +139,7 @@ public class Deposito {
 		
 		int iter = 0;
 		int melhorIter = 0;
-		int btMax = 100;
+		int btMax = 100000;
 		
 		ArrayList<Rota> solucaoTemp = null;
 		
@@ -281,9 +281,8 @@ public class Deposito {
 										indexElemento1 = solucao.get(i).getListaCliente().get(j).getIdentificador();
 										indexElemento2 = clienteBase.getIdentificador();
 										
-										System.out.println("Valor objetivo: " + funcaoObjetivo(solucaoTemp));
-										//System.out.println(funcaoObjetivo(solucaoTemp));
-										
+										//System.out.println("Valor objetivo: " + funcaoObjetivo(solucaoTemp));
+																				
 										/*System.out.println("---------NOVA SOLUCAO TEMPORARIA--------");
 										
 										System.out.println("Valor objetivo: " + funcaoObjetivo(solucaoTemp));
