@@ -449,7 +449,7 @@ public class Deposito {
 		
 		int linhaAux = 0;
 		HashMap<Integer, Cliente> listaCandidatos = new HashMap<>(this.listaCliente);		
-		int tamanhoLista = 3;
+		int tamanhoLista = 1;
 		ArrayList<Rota> rotas = new ArrayList<>();
 		Rota rota = new Rota();
 		
@@ -465,11 +465,11 @@ public class Deposito {
 				if((linhaAux != colunaAux) && //Verifica se i != i
 					(verificaCusto(listaColunas, colunaAux, linhaAux, tamanhoLista) && //Pode ser na lista de colunas 
 					(verificaCapacidade(custoDemanda(rota), this.veiculo.getCapacidade(), listaCandidatos.get(colunaAux).getDemanda())))){ //Verifica se ultrapassa a capacidade do veiculo
-
+					
 					colocaListaColunas(listaColunas, colunaAux, linhaAux, tamanhoLista);
 				}
 			}
-						
+			
 			//Insere cliente na rota			
 			if(listaColunas.size() != 0){
 				
@@ -482,6 +482,16 @@ public class Deposito {
 				
 				listaCandidatos.remove(listaColunas.get(coluna));
 				
+				if(listaCandidatos.size() == 0){
+					linhaAux = 0;
+					rota.setItemListaCliente(deposito);
+					int posicao = rota.getListaCliente().get(rota.getListaCliente().size() - 1).getIdentificador();
+					rota.setCustoTotal(rota.getCustoTotal() + this.matrizCustos[linhaAux][posicao]);				
+					
+					rotas.add(rota);
+					listaColunas.clear();
+				}
+				
 				listaColunas.clear();
 	
 			} else {												
@@ -489,7 +499,7 @@ public class Deposito {
 								
 				rota.setItemListaCliente(deposito);
 				int posicao = rota.getListaCliente().get(rota.getListaCliente().size() - 1).getIdentificador();
-				rota.setCustoTotal(rota.getCustoTotal() + this.matrizCustos[linhaAux][posicao]);
+				rota.setCustoTotal(rota.getCustoTotal() + this.matrizCustos[linhaAux][posicao]);				
 				
 				rotas.add(rota);
 				listaColunas.clear();				
