@@ -15,7 +15,9 @@ public class Deposito {
 	private HashMap<Integer, Cliente> listaCliente = new HashMap<>(); 
 	private float[][] matrizCustos;
 	private HashMap<Integer, Float> listaDemanda = new HashMap<>();
-
+	private ArrayList<ElementoListaTabu> listaTabu = new ArrayList<ElementoListaTabu>();
+	private int tamanhoListaTabu = 10;
+	
 	public Deposito() {
 		// TODO Auto-generated constructor stub
 	}
@@ -123,7 +125,7 @@ public class Deposito {
 		
 		ArrayList<Rota> solucao = criaSolucaoInicial();
 				
-		/*System.out.println("---------SOLUCAO INICIAL--------");
+		System.out.println("---------SOLUCAO INICIAL--------");
 		
 		System.out.println("Valor objetivo: " + funcaoObjetivo(solucao));
 		for (Rota rota2 : solucao) {
@@ -133,7 +135,7 @@ public class Deposito {
 				System.out.print(cliente.getIdentificador() + ";");
 			}
 			System.out.println("");
-		}*/
+		}
 		
 		int iter = 0;
 		int melhorIter = 0;
@@ -148,29 +150,30 @@ public class Deposito {
 			
 			solucaoTemp = criaSolucaoTroca(solucao);
 			
+			/*System.out.println("---------SOLUCAO PARCIAL--------");
+			
+			System.out.println("Valor objetivo: " + funcaoObjetivo(solucaoTemp));
+			for (Rota rota2 : solucaoTemp) {
+				System.out.print("Rota - " + "Dist: " + rota2.getCustoTotal() + " - ");
+				System.out.print("Dem: " + custoDemanda(rota2) + " - ");
+				for (Cliente cliente : rota2.getListaCliente()) {
+					System.out.print(cliente.getIdentificador() + ";");
+				}
+				System.out.println("");
+			}*/
+			
 			if(funcaoObjetivo(solucaoTemp) < funcaoObjetivo(solucao)){
 				
 				System.out.println(funcaoObjetivo(solucaoTemp));
 				solucao = solucaoTemp;
 				melhorIter = iter;			
-				
-				System.out.println("---------SOLUCAO PARCIAL--------");
-				
-				System.out.println("Valor objetivo: " + funcaoObjetivo(solucaoTemp));
-				for (Rota rota2 : solucaoTemp) {
-					System.out.print("Rota - " + "Dist: " + rota2.getCustoTotal() + " - ");
-					System.out.print("Dem: " + custoDemanda(rota2) + " - ");
-					for (Cliente cliente : rota2.getListaCliente()) {
-						System.out.print(cliente.getIdentificador() + ";");
-					}
-					System.out.println("");
-				}
+
 			}			
 		}
 		
 		//solucaoTemp = criaSolucaoTroca(solucao);
 
-		System.out.println("---------SOLUCAO INICIAL--------");
+		/*System.out.println("---------SOLUCAO INICIAL--------");
 		
 		System.out.println("Valor objetivo: " + funcaoObjetivo(solucao));
 		for (Rota rota2 : solucao) {
@@ -180,7 +183,7 @@ public class Deposito {
 				System.out.print(cliente.getIdentificador() + ";");
 			}
 			System.out.println("");
-		}
+		}*/
 		
 		System.out.println("---------SOLUCAO FINAL--------");
 		
@@ -205,7 +208,8 @@ public class Deposito {
 		Rota rotaBase = new Rota();
 		Double custoTempSolucao = 9999999.0;
 		int indexRotaBase = -1;
-		
+		int indexElemento1 = 0;
+		int indexElemento2 = 0;
 		//Seleciona Rota Base
 		for(int c = 0; c < solucao.size(); c++){			
 						
@@ -231,21 +235,13 @@ public class Deposito {
 									//Verifica se ultrapassa capacidade do veiculo
 									if(custoDemanda(rotaBaseTemp) - clienteBase.getDemanda() + listaClienteTemp.get(j).getDemanda() > this.veiculo.getCapacidade()
 									  || custoDemanda(solucao.get(i)) + clienteBase.getDemanda() - listaClienteTemp.get(j).getDemanda() > this.veiculo.getCapacidade()){
-										/*System.out.println("TESTE-------------");
-										System.out.println(custoDemanda(rotaBaseTemp) + " - " 
-													+ clienteBase.getDemanda() +  " + " + listaClienteTemp.get(j).getDemanda() + " < " + this.veiculo.getCapacidade());
-										
-										System.out.println(custoDemanda(solucao.get(i)) + " + " 
-												+ clienteBase.getDemanda() +  " - " + listaClienteTemp.get(j).getDemanda() + " < " + this.veiculo.getCapacidade());*/																		
-										break;
+																											
+										continue;
 									}
-
-									/*System.out.println("TESTE-------------");
-									System.out.println(custoDemanda(rotaBaseTemp) + " - " 
-												+ clienteBase.getDemanda() +  " + " + listaClienteTemp.get(j).getDemanda() + " < " + this.veiculo.getCapacidade());
 									
-									System.out.println(custoDemanda(solucao.get(i)) + " + " 
-											+ clienteBase.getDemanda() +  " - " + listaClienteTemp.get(j).getDemanda() + " < " + this.veiculo.getCapacidade());*/
+									if(validaListaTabu(clienteBase.getIdentificador(), solucao.get(i).getListaCliente().get(j).getIdentificador())){
+										continue;
+									}
 									//Troca temporária
 
 									//custos anteriores
@@ -275,18 +271,6 @@ public class Deposito {
 									solucaoTemp.remove(solucao.get(i));
 									solucaoTemp.add(rotaTemp);
 									
-									/*System.out.println("---------NOVA SOLUCAO--------");
-									
-									System.out.println("Valor objetivo: " + funcaoObjetivo(solucaoTemp));
-									for (Rota rota2 : solucaoTemp) {
-										System.out.print("Rota - " + "Dist: " + rota2.getCustoTotal() + " - ");
-										System.out.print("Dem: " + custoDemanda(rota2) + " - ");
-										for (Cliente cliente : rota2.getListaCliente()) {
-											System.out.print(cliente.getIdentificador() + ";");
-										}
-										System.out.println("");
-									}
-									 */
 									Double custoSolucaoCriada = funcaoObjetivo(solucaoTemp);
 									
 									//Teste de melhoria
@@ -294,6 +278,10 @@ public class Deposito {
 										custoTempSolucao = custoSolucaoCriada;
 										solucaoCriada = solucaoTemp;	
 										
+										indexElemento1 = solucao.get(i).getListaCliente().get(j).getIdentificador();
+										indexElemento2 = clienteBase.getIdentificador();
+										
+										System.out.println("Valor objetivo: " + funcaoObjetivo(solucaoTemp));
 										//System.out.println(funcaoObjetivo(solucaoTemp));
 										
 										/*System.out.println("---------NOVA SOLUCAO TEMPORARIA--------");
@@ -315,7 +303,33 @@ public class Deposito {
 				}
 	 		}
 		}
+		
+		ElementoListaTabu elemento = new ElementoListaTabu(indexElemento1, indexElemento2);
+		adicionaListaTabu(elemento);
 		return solucaoCriada;
+	}
+	
+	public boolean validaListaTabu(int elemento1, int elemento2){
+		
+		for (ElementoListaTabu elem1 : this.listaTabu) {
+			
+			if((elem1.getElemento1() == elemento1 || elem1.getElemento1() == elemento2) 
+					&& (elem1.getElemento2() == elemento1 || elem1.getElemento2() == elemento2)){				
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public void adicionaListaTabu(ElementoListaTabu elem){
+		
+		if(listaTabu.size() + 1 > tamanhoListaTabu){
+			listaTabu.add(0, elem);
+			listaTabu.remove(listaTabu.size()-1);
+		} else {
+			listaTabu.add(0, elem);
+		}
 	}
 	
 	public ArrayList<Rota> criaSolucaoRealocacao(ArrayList<Rota> solucao){
@@ -456,21 +470,6 @@ public class Deposito {
 					colocaListaColunas(listaColunas, colunaAux, linhaAux, tamanhoLista);
 				}
 			}
-			
-			/*for(int colunaAux = 0; colunaAux < this.matrizCustos[linhaAux].length + 1; colunaAux++) {
-				
-				if(listaCandidatos.get(colunaAux) != null){
-					int indiceColuna = listaCandidatos.get(colunaAux).getIdentificador();
-					System.out.println(colunaAux);
-					System.out.println("ID "+listaCandidatos.get(colunaAux).getIdentificador());
-					if((linhaAux != colunaAux) && //Verifica se i != i
-						(verificaCusto(listaColunas, colunaAux, linhaAux, tamanhoLista) && //Pode ser na lista de colunas 
-						(verificaCapacidade(custoDemanda(rota), this.veiculo.getCapacidade(), listaCandidatos.get(colunaAux).getDemanda())))){ //Verifica se ultrapassa a capacidade do veiculo
-
-						colocaListaColunas(listaColunas, colunaAux, linhaAux, tamanhoLista);
-					}
-				}												
-			}*/
 						
 			//Insere cliente na rota			
 			if(listaColunas.size() != 0){
@@ -524,7 +523,7 @@ public class Deposito {
 		if(listaColunas.size() < tamanhoLista){
 			return true;
 		}
-		System.out.println(coluna + ";"+ linha );
+
 		for (Integer cliente : listaColunas) {
 			if(matrizCustos[linha][coluna] < matrizCustos[linha][cliente]){
 				return true;
